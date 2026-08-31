@@ -4,4 +4,32 @@ import { Server } from "socket.io"
 import { YSocketIO} from "y-socket.io/dist/server"
 
 const app = express()
-const server = createServer(app)
+const httpServer = createServer(app)
+
+const io = new Server(httpServer,{
+    cors:{
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+})
+
+const ySocketiO = new YSocketIO(io)
+ySocketiO.initialize()
+
+app.get("/", (req, res) => {
+    res.status(200).json({
+        message:"hello world",
+        success: true
+    })
+})
+
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        message: "ok",
+        success: true
+    })
+})
+
+httpServer.listen(3000,() =>{
+    console.log("Server is running on port 3000")
+})
